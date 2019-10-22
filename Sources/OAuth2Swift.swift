@@ -23,6 +23,8 @@ open class OAuth2Swift: OAuthSwift {
     /// Encode callback url inside the query, this is second encoding phase when the entire query string gets assembled. In rare 
     /// cases, like with Imgur, the url needs to be encoded only once and this value needs to be set to `false`.
     open var encodeCallbackURLQuery: Bool = true
+    
+    open var tokenRequestBodyAddClientInfo: Bool = true
 
     var consumerKey: String
     var consumerSecret: String
@@ -174,8 +176,10 @@ open class OAuth2Swift: OAuthSwift {
 
     open func postOAuthAccessTokenWithRequestToken(byCode code: String, callbackURL: URL?, headers: OAuthSwift.Headers? = nil, completionHandler completion: @escaping TokenCompletionHandler) -> OAuthSwiftRequestHandle? {
         var parameters = OAuthSwift.Parameters()
-        parameters["client_id"] = self.consumerKey
-        parameters["client_secret"] = self.consumerSecret
+        if tokenRequestBodyAddClientInfo {
+            parameters["client_id"] = self.consumerKey
+            parameters["client_secret"] = self.consumerSecret
+        }
         parameters["code"] = code
         parameters["grant_type"] = "authorization_code"
 
